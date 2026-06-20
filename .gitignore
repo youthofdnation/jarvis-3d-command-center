@@ -1,0 +1,41 @@
+# Unity generated folders
+Library/
+Temp/
+Obj/
+Build/
+Builds/
+Logs/
+UserSettings/
+
+# IDE / OS
+.vscode/
+.idea/
+.vs/
+.DS_Store
+
+# Unity generated project files
+*.csproj
+*.sln
+*.user
+*.pidb
+*.booproj
+*.svd
+
+# Archives / dumps
+*.log
+*.stacktrace
+*.tmp
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+
+# Sensitive / secrets (explicitly blocked)
+.env
+*.key
+*.pem
+client_secret.json
+token.json
+*.db
+*.sqlite
+

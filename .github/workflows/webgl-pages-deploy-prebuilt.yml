@@ -1,0 +1,52 @@
+name: WebGL Deploy Prebuilt (No Unity Build)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: webgl-pages-prebuilt
+  cancel-in-progress: true
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate prebuilt files
+        run: |
+          if [ ! -f "webgl-dist/index.html" ]; then
+            echo "webgl-dist/index.html not found."
+            echo "Use the build workflow first, or upload/copy prebuilt files into webgl-dist/."
+            exit 1
+          fi
+
+      - name: Prepare Pages artifact
+        run: |
+          rm -rf pages
+          mkdir -p pages
+          cp -R webgl-dist/* pages/
+          touch pages/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: package
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
