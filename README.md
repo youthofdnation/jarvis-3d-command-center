@@ -124,6 +124,28 @@ bash ./export_webgl_dist.sh
 2. `webgl-dist`를 커밋/푸시
 3. Actions에서 `WebGL Deploy Prebuilt (No Unity Build)` 실행
 
+## Unity 설치 없이 라이선스 준비(Manual Activation)
+
+`UNITY_LICENSE`가 없으면 WebGL 빌드가 실패합니다. 로컬 설치 없이도 아래 순서로 준비할 수 있습니다.
+
+1. GitHub Actions에서 `Unity License Request (No Local Install)` 실행
+2. 실행 결과 Artifact(`unity-activation-file`)에서 `.alf` 파일 다운로드
+3. Unity Manual Activation 페이지에서 `.alf` 업로드 -> `.ulf` 파일 발급
+4. 발급한 `.ulf`를 저장소 시크릿으로 등록:
+
+```bash
+gh secret set UNITY_LICENSE -R youthofdnation/jarvis-3d-command-center < "/absolute/path/to/Unity_lic.ulf"
+```
+
+5. 필요 시 계정 시크릿도 실제 값으로 설정:
+
+```bash
+gh secret set UNITY_EMAIL -R youthofdnation/jarvis-3d-command-center -b "real-email@example.com"
+gh secret set UNITY_PASSWORD -R youthofdnation/jarvis-3d-command-center -b "real-password"
+```
+
+6. 이후 `WebGL Build and Deploy (GitHub Pages)` 워크플로 재실행
+
 ## 정적 서버 배포 (Nginx/S3/사내 서버 등)
 
 ### 1) prebuilt dist 패키징
