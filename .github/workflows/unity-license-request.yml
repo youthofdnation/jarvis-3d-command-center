@@ -9,20 +9,30 @@ permissions:
 jobs:
   request-activation-file:
     runs-on: ubuntu-latest
+    container:
+      image: unityci/editor:ubuntu-2022.3.40f1-webgl-3
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Request Unity activation file (.alf)
-        id: activation
-        uses: game-ci/unity-request-activation-file@v2
-        with:
-          unityVersion: 2022.3.40f1
+      - name: Generate Unity activation file (.alf)
+        shell: bash
+        run: |
+          /opt/unity/Editor/Unity -batchmode -nographics -quit -createManualActivationFile -logFile -
+          shopt -s nullglob
+          files=( *.alf )
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No .alf file found in workspace root"
+            ls -la
+            exit 1
+          fi
+          echo "ALF_FILE=${files[0]}" >> "$GITHUB_ENV"
+          echo "Generated activation file: ${files[0]}"
 
       - name: Upload activation file artifact
         uses: actions/upload-artifact@v4
         with:
           name: unity-activation-file
-          path: ${{ steps.activation.outputs.filePath }}
+          path: ${{ env.ALF_FILE }}
           retention-days: 3
 
